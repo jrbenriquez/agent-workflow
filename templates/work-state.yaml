@@ -1,0 +1,9 @@
+outcome_id: example
+status: pending # pending | implementing | verifying | recalibrating | verified | blocked
+attempt: 0
+criteria:
+  - id: AC-01
+    status: pending # pending | pass | fail | inconclusive
+    evidence: []
+blockers: []
+recalibrations: []

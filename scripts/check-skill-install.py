@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 subprocess.run(['python3', str(ROOT / 'scripts/sync-handoffs.py'), '--check'], check=True)
 with tempfile.TemporaryDirectory(prefix='agent-workflow-install-') as temporary:
-    for name in ('orchestrate-work', 'implement', 'verify', 'recalibrate'):
+    for name in ('orchestrate-work', 'implement', 'verify', 'recalibrate', 'to-outcomes'):
         consumer = Path(temporary) / name
         consumer.mkdir()
         subprocess.run(['git', 'init', '-q', str(consumer)], check=True)
@@ -18,14 +18,21 @@ with tempfile.TemporaryDirectory(prefix='agent-workflow-install-') as temporary:
         subprocess.run(command, cwd=consumer, check=True)
         installed = consumer / '.agents/skills' / name
         assert not installed.is_symlink(), installed
-        bundled = installed / 'references/HANDOFFS.md'
-        assert bundled.is_file() and not bundled.is_symlink(), bundled
-        assert bundled.read_bytes() == (ROOT / 'skills' / name / 'references/HANDOFFS.md').read_bytes()
-        for document in (installed / 'SKILL.md', bundled):
+        entrypoint = installed / 'SKILL.md'
+        # gh rewrites frontmatter and adds local-path metadata during installation.
+        source = ROOT / 'skills' / name / 'SKILL.md'
+        assert entrypoint.read_text().split('---', 2)[2].strip() == source.read_text().split('---', 2)[2].strip()
+        documents = [entrypoint]
+        if name != 'to-outcomes':
+            bundled = installed / 'references/HANDOFFS.md'
+            assert bundled.is_file() and not bundled.is_symlink(), bundled
+            assert bundled.read_bytes() == (ROOT / 'skills' / name / 'references/HANDOFFS.md').read_bytes()
+            documents.append(bundled)
+        for document in documents:
             for link in re.findall(r'\]\(([^)]+)\)', document.read_text()):
                 if '://' not in link and not link.startswith('#'):
                     resolved = (document.parent / link.split('#')[0]).resolve()
                     assert resolved.is_relative_to(installed.resolve()), resolved
                     assert resolved.exists(), resolved
         assert sorted(p.name for p in installed.parent.iterdir()) == [name]
-        print(f'PASS: {name}: bundled contract matches source; local links stay inside skill.')
+        print(f'PASS: {name}: installed files match source; local links stay inside skill.')

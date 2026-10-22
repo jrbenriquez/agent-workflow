@@ -86,3 +86,22 @@ execution of the instructions. Re-run it when the CLI or packaging changes.
 - Confirm supported discovery paths for target agents.
 - Confirm how installer handles pinning, upgrades, and locally modified skill files.
 - Test remote install and update in a disposable consuming repository.
+
+## Optional PRD decomposition
+
+`to-outcomes` is a self-contained planning skill distributed alongside the four
+core workflow skills. It has no runtime handoff contract and needs no generated
+reference files. Install it independently using the same local-source approach:
+
+```sh
+gh skill install /path/to/agent-workflow to-outcomes --from-local --agent codex --scope project
+```
+
+Invoke it with a PRD path to write outcome documents and a dependency/coverage
+index inside `outcomes/<general-outcome-name>/` in the consuming repository.
+The user chooses the general outcome name; multiple sets can coexist in separate
+folders. New outcome IDs include the set name to keep runtime state distinct.
+Execute ready outcomes individually with
+`orchestrate-work`; the index is a plan, not an automatic scheduler. The local
+installation checker includes this fifth, optional skill and compares its
+installed instruction body to the source (the installer rewrites frontmatter). The four core contract bundles remain unchanged.

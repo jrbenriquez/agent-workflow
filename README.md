@@ -6,6 +6,7 @@ A project-agnostic, outcome-driven software development workflow.
 
 ## Skills
 
+- `to-outcomes`: Splits a PRD into verifiable outcomes, dependencies, and a coverage index.
 - `orchestrate-work`: Owns outcome state, phase transitions, and completion decisions.
 - `implement`: Executes a scoped implementation plan.
 - `verify`: Assesses acceptance criteria using reproducible evidence.
@@ -21,14 +22,18 @@ Optional project-owned capabilities live in `.agents/capabilities/CAPABILITIES.m
 
 ## Installation
 
-Publish this repository to GitHub, tag releases (for example `v0.1.0`), then install the four skills using an Agent Skills-compatible manager. See [distribution guidance](docs/DISTRIBUTION.md). Check the current CLI documentation for exact commands and flags.
+Publish this repository to GitHub, tag releases (for example `v0.1.0`), then install the four core skills and optionally `to-outcomes` using an Agent Skills-compatible manager. See [distribution guidance](docs/DISTRIBUTION.md). Check the current CLI documentation for exact commands and flags.
 
 ## Project setup
 
 1. Install the core skills in your project's supported skill directory.
 2. Optionally copy `templates/CAPABILITIES.md` to `.agents/capabilities/CAPABILITIES.md` and edit it.
-3. Create an outcome document from `templates/outcome.md`.
-4. Invoke `orchestrate-work` with the path to the outcome document.
+3. Create an outcome document from `templates/outcome.md`, or invoke `to-outcomes` with a PRD to generate outcome files and a coverage index inside `outcomes/<general-outcome-name>/`.
+4. Invoke `orchestrate-work` with the path to a ready outcome document. For multiple outcomes, follow their dependency order and verify prerequisites before each invocation.
+
+Example: `Use to-outcomes to split docs/product-prd.md. Name the general outcome "Katagawa Website".`
+This produces `outcomes/katagawa-website/README.md` and the outcome documents in that folder. Each set has its own folder; the skill asks for the general outcome name when it is missing.
+The planning skill writes outcome documents; it does not initialize runtime state or automatically execute the resulting queue.
 
 ## Principles
 

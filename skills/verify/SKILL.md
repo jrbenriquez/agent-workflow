@@ -5,8 +5,13 @@ description: Independently assess implementation against explicit acceptance cri
 
 # Verify
 
+## Shared handoffs
+Read [Handoff contracts](references/HANDOFFS.md) for required result fields,
+evidence rules, examples, and phase routing.
+
 ## Inputs
 - Original outcome document and acceptance criteria.
+- Implementation result (or recalibration diagnostic request and findings).
 - Current implementation and repository state.
 - Optional project capability registry at `.agents/capabilities/CAPABILITIES.md`.
 
@@ -19,7 +24,9 @@ description: Independently assess implementation against explicit acceptance cri
 6. Note regression risks and untested paths. A test that was not run cannot count as a pass.
 
 ## Output
-For each criterion provide: ID, status, evidence, and reason. Include an overall status and any blockers.
+Return a verification result using the shared contract. Cover every criterion
+in the assigned scope exactly once, apply the shared overall-status rule, and
+identify corrective targets or missing evidence for recalibration.
 
 ## Independence
 Do not accept the implementer's success claim as evidence. Do not weaken or edit acceptance criteria. Do not modify product code as part of verification; report defects for recalibration.

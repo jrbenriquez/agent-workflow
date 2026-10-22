@@ -11,6 +11,10 @@ A project-agnostic, outcome-driven software development workflow.
 - `verify`: Assesses acceptance criteria using reproducible evidence.
 - `recalibrate`: Diagnoses failed or inconclusive verification and plans the next attempt.
 
+Shared [handoff contracts and examples](docs/HANDOFFS.md) define phase results
+and orchestration decisions. [Outcome state and resume rules](docs/WORK-STATE.md)
+define project-local checkpoints and a default limit of three implementation attempts.
+
 ## Project capabilities
 
 Optional project-owned capabilities live in `.agents/capabilities/CAPABILITIES.md` in consuming repositories. Skills should read the registry if present and proceed with available native tools if absent. A project-specific skill (such as `be-control`) remains owned by that project.
@@ -31,6 +35,12 @@ Publish this repository to GitHub, tag releases (for example `v0.1.0`), then ins
 - The human-owned outcome is authoritative; agents cannot silently weaken acceptance criteria.
 - Verification is evidence-based; an assertion of success is not proof.
 - Failure triggers diagnosis and scoped adjustment, not blind retry.
-- Outcomes can be `verified`, `blocked`, or `inconclusive`; never claim success when necessary evidence is missing.
+- Outcome phases are `implement`, `verify`, `recalibrate`, `complete`, or `blocked`.
+  Criterion verdicts distinguish PASS, FAIL, and INCONCLUSIVE; missing evidence cannot establish completion.
 - Work state and evidence belong to the consuming project, not the upstream skill distribution.
 - For multi-agent use, isolate work and reverify after integration. Initial implementation targets one agent.
+
+## Smoke test
+
+See the [CSV export sample](examples/csv-export/README.md) for deterministic
+contract/state tests, an agent-driven procedure, and recorded execution results.

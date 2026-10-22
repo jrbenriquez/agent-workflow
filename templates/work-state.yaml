@@ -1,9 +1,29 @@
-outcome_id: example
-status: pending # pending | implementing | verifying | recalibrating | verified | blocked
-attempt: 0
+# See docs/WORK-STATE.md in the upstream repository for schema and resume rules.
+schema_version: 1
+outcome_id: csv-export
+outcome:
+  reference: ../../../outcomes/csv-export.md
+  fingerprint: "<digest of authoritative outcome including criteria and constraints>"
+phase: implement # implement | verify | recalibrate | complete | blocked
+step: ready # ready | running | returned; terminal phases use ready
+scope: [AC-01, AC-02]
+implementation_attempts:
+  started: 0
+  maximum: 3
+workspace: "<identity of relevant code, configuration, and verification environment>"
 criteria:
   - id: AC-01
-    status: pending # pending | pass | fail | inconclusive
+    status: PENDING # PENDING | PASS | FAIL | INCONCLUSIVE
+    evidence: [] # [{handoff: handoffs/verify-1.yaml, id: V1}]
+    verified_workspace: null
+    reason: Not yet assessed.
+  - id: AC-02
+    status: PENDING
     evidence: []
-blockers: []
-recalibrations: []
+    verified_workspace: null
+    reason: Not yet assessed.
+latest_handoff: null # or {type: implementation, reference: handoffs/implement-1.yaml}
+latest_verification: null # or handoffs/verify-1.yaml
+recalibrations: [] # ordered {reference: handoffs/recalibrate-1.yaml, decision: REIMPLEMENT}
+blockers: [] # {code: attempt_limit, reason: ..., next: ...}
+next: Implement filtered export and retain the empty-result header.

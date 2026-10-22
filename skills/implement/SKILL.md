@@ -5,6 +5,10 @@ description: Make scoped software changes to satisfy a specific outcome or docum
 
 # Implement
 
+## Shared handoffs
+Read [Handoff contracts](references/HANDOFFS.md) for required result fields,
+evidence rules, examples, and phase routing.
+
 ## Inputs
 - Assigned outcome and acceptance criteria.
 - Constraints and any recalibration plan.
@@ -16,7 +20,9 @@ description: Make scoped software changes to satisfy a specific outcome or docum
 3. Plan the smallest coherent change that satisfies the assigned criteria.
 4. Implement and add or update appropriate tests.
 5. Run fast, relevant checks available in the environment.
-6. Report changed files, rationale, checks run, known gaps, and any assumptions to the orchestrator.
+6. Return an implementation result using the shared contract, including changes,
+   checks, assumptions, gaps, blockers, and the next actionable step. This is not
+   an acceptance verdict.
 
 ## Boundaries
 - Do not alter the outcome's acceptance criteria.

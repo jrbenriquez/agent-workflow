@@ -5,10 +5,14 @@ description: Diagnose failed or inconclusive verification and produce a bounded 
 
 # Recalibrate
 
+## Shared handoffs
+Read [Handoff contracts](references/HANDOFFS.md) for required result fields,
+evidence rules, examples, and phase routing.
+
 ## Inputs
 - Original outcome and constraints.
-- Previous implementation summary.
-- Verification evidence and failed/inconclusive criteria.
+- Previous implementation result.
+- Verification result with evidence and failed/inconclusive criteria.
 - Prior attempts and adjustment plans.
 
 ## Procedure
@@ -21,10 +25,9 @@ description: Diagnose failed or inconclusive verification and produce a bounded 
 7. Flag repeated non-progress, conflicting requirements, or risks that warrant human escalation.
 
 ## Output
-- Failure summary and evidence references.
-- Root-cause assessment with uncertainty where relevant.
-- Scoped adjustment plan (not code).
-- Preservation constraints and reverification plan.
-- Decision: `REIMPLEMENT`, `GATHER_EVIDENCE`, or `ESCALATE`.
+Return a recalibration result using the shared contract. Distinguish a SUPPORTED
+cause from a HYPOTHESIS, cite evidence, and identify the scoped adjustment or
+targeted diagnostic action. Include preservation constraints and reverification
+scope. Use the shared decisions: `REIMPLEMENT`, `GATHER_EVIDENCE`, or `ESCALATE`.
 
 Never silently change acceptance criteria or implement code during recalibration.

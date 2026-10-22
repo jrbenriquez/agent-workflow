@@ -1,51 +1,108 @@
 # Agent Workflow
 
-A project-agnostic, outcome-driven software development workflow.
+Turn a software requirement into working, verified software using five reusable
+agent skills. Start with a PRD or one outcome; the agent implements it, verifies
+its acceptance criteria, and diagnoses failures before trying again.
 
-**Core loop:** Outcome → Implement → Verify → Recalibrate (if needed) → Repeat until verified or blocked.
+**PRD → Outcomes → Implement → Verify → Recalibrate → Verified or Blocked**
 
-## Skills
+Progress, evidence and handoffs are saved in your repository so another chat can
+resume from the next unfinished phase. Each outcome has a default budget of three
+implementation attempts. The workflow never silently weakens acceptance criteria
+or resets that budget.
 
-- `to-outcomes`: Splits a PRD into verifiable outcomes, dependencies, and a coverage index.
-- `orchestrate-work`: Owns outcome state, phase transitions, and completion decisions.
-- `implement`: Executes a scoped implementation plan.
-- `verify`: Assesses acceptance criteria using reproducible evidence.
-- `recalibrate`: Diagnoses failed or inconclusive verification and plans the next attempt.
+## Get started in your repository
 
-Shared [handoff contracts and examples](docs/HANDOFFS.md) define phase results
-and orchestration decisions. [Outcome state and resume rules](docs/WORK-STATE.md)
-define project-local checkpoints and a default limit of three implementation attempts.
+You need Git, an agent supporting Agent Skills, and a GitHub CLI version with
+`gh skill install` (currently a preview command). The commands below target Codex;
+use your agent's supported `--agent` value for another host.
 
-## Project capabilities
+From the repository where you want to build your application, install all five
+skills at the same release:
 
-Optional project-owned capabilities live in `.agents/capabilities/CAPABILITIES.md` in consuming repositories. Skills should read the registry if present and proceed with available native tools if absent. A project-specific skill (such as `be-control`) remains owned by that project.
+```sh
+cd /path/to/your-project
+for skill in to-outcomes orchestrate-work implement verify recalibrate; do
+  gh skill install jrbenriquez/agent-workflow "$skill" \
+    --pin v0.1.0 --agent codex --scope project
+done
+```
 
-## Installation
+This requires the `v0.1.0` tag to have been published. Skills are copied into
+`.agents/skills/` in your project; installing them does not start implementation.
 
-Publish this repository to GitHub, tag releases (for example `v0.1.0`), then install the four core skills and optionally `to-outcomes` using an Agent Skills-compatible manager. See [distribution guidance](docs/DISTRIBUTION.md). Check the current CLI documentation for exact commands and flags.
+Open a new agent chat in that repository and provide your PRD:
 
-## Project setup
+```text
+Use to-outcomes to split docs/product-prd.md.
+Name the general outcome "My Website".
+```
 
-1. Install the core skills in your project's supported skill directory.
-2. Optionally copy `templates/CAPABILITIES.md` to `.agents/capabilities/CAPABILITIES.md` and edit it.
-3. Create an outcome document from `templates/outcome.md`, or invoke `to-outcomes` with a PRD to generate outcome files and a coverage index inside `outcomes/<general-outcome-name>/`.
-4. Invoke `orchestrate-work` with the path to a ready outcome document. For multiple outcomes, follow their dependency order and verify prerequisites before each invocation.
+The skill writes `outcomes/my-website/README.md` plus one document per outcome in
+that folder. The index records dependencies, PRD coverage and unresolved blockers.
+Each outcome has observable acceptance criteria and verification requirements.
+Different projects or features can have separate folders under `outcomes/`.
 
-Example: `Use to-outcomes to split docs/product-prd.md. Name the general outcome "Katagawa Website".`
-This produces `outcomes/katagawa-website/README.md` and the outcome documents in that folder. Each set has its own folder; the skill asks for the general outcome name when it is missing.
-The planning skill writes outcome documents; it does not initialize runtime state or automatically execute the resulting queue.
+Review the generated documents and resolve blockers, then execute the first ready
+outcome using its actual file path:
 
-## Principles
+```text
+Use orchestrate-work to execute outcomes/my-website/my-website-story.md.
+Continue until verified completion or Blocked.
+```
 
-- The human-owned outcome is authoritative; agents cannot silently weaken acceptance criteria.
-- Verification is evidence-based; an assertion of success is not proof.
-- Failure triggers diagnosis and scoped adjustment, not blind retry.
-- Outcome phases are `implement`, `verify`, `recalibrate`, `complete`, or `blocked`.
-  Criterion verdicts distinguish PASS, FAIL, and INCONCLUSIVE; missing evidence cannot establish completion.
-- Work state and evidence belong to the consuming project, not the upstream skill distribution.
-- For multi-agent use, isolate work and reverify after integration. Initial implementation targets one agent.
+Run subsequent outcomes in dependency order. The workflow handles one outcome at
+a time; the index does not automatically schedule the whole project. For a small
+change, skip PRD splitting and write one outcome using [the template](templates/outcome.md).
 
-## Smoke test
+To continue in a new chat, provide the saved state path:
 
-See the [CSV export sample](examples/csv-export/README.md) for deterministic
-contract/state tests, an agent-driven procedure, and recorded execution results.
+```text
+Use orchestrate-work to resume from .agents/work/my-website-story/state.yaml.
+Validate the outcome, workspace and saved evidence. Preserve the attempt count
+and retry limit; continue until verified completion or Blocked.
+```
+
+Keep outcome documents and `.agents/work/<outcome-id>/` state, handoffs and evidence
+available to the next session. A blocked outcome records what is needed to resume.
+
+## Keep your installed skills updated
+
+Upstream changes do not automatically change the copies in your project. A pinned
+release stays fixed, and `gh skill update` skips pinned skills.
+
+For a controlled upgrade, review the upstream changes, choose a published release,
+and rerun the installation loop above with the new tag (for example, `v0.2.0`).
+Review any overwrite prompts and local skill edits, then review and commit the
+updated `.agents/skills/` files in your project. Upgrade all five skills together.
+Application code, outcome documents and runtime state remain project-owned;
+follow any migration instructions if a release changes the state schema.
+
+If you prefer unpinned updates, from your project run:
+
+```sh
+gh skill update to-outcomes orchestrate-work implement verify recalibrate --unpin
+```
+
+This removes the release pins and updates the selected skills interactively. For
+later checks, use the same command without `--unpin`, adding `--dry-run` to preview
+available updates. Unversioned installation resolves the latest tagged release,
+or the default branch when there are no releases; it should not be assumed to
+follow every commit on `main`. Check `gh skill update --help` for your CLI version.
+
+## The five skills
+
+| Skill | Responsibility |
+| --- | --- |
+| `to-outcomes` | Split a PRD into scoped outcomes, dependencies and a coverage index. |
+| `orchestrate-work` | Own checkpoints, retry limits, phase transitions and completion. |
+| `implement` | Make scoped changes and return an implementation handoff. |
+| `verify` | Independently assess acceptance criteria with actual evidence. |
+| `recalibrate` | Diagnose failed or inconclusive verification and plan the next action. |
+
+Project-specific tools are optional: describe them in
+`.agents/capabilities/CAPABILITIES.md` using [the capability template](templates/CAPABILITIES.md).
+Without a registry, the agent uses available native tools and reports gaps.
+
+See [handoff contracts](docs/HANDOFFS.md), [state and recovery rules](docs/WORK-STATE.md),
+and [distribution and installation checks](docs/DISTRIBUTION.md) for details.

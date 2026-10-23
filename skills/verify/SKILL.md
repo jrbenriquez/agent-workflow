@@ -20,6 +20,9 @@ evidence rules, examples, and phase routing.
 2. Discover applicable project-specific verification skills, scripts, and application controls without assuming they exist.
 3. Run appropriate automated tests, checks, and behavioral inspection where feasible.
 4. Record the commands/actions performed, environment, results, and evidence locations.
+   Identify inspected code, configuration and fixtures, including dirty/untracked
+   inputs. For groups, inspect the coordinator's integrated workspace and affected
+   earlier criteria; worker-branch checks cannot establish integrated acceptance.
 5. Return a per-criterion status: `PASS`, `FAIL`, or `INCONCLUSIVE`.
 6. Note regression risks and untested paths. A test that was not run cannot count as a pass.
 

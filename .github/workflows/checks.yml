@@ -1,0 +1,90 @@
+name: Skill checks
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: skill-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  references-and-tests:
+    name: Skill metadata, references and tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install check dependencies
+        run: python3 -m pip install -r scripts/requirements-checks.txt
+      - name: Validate skill frontmatter
+        run: |
+          if ! python3 scripts/check-skill-frontmatter.py; then
+            echo "::error title=Invalid skill metadata::See the file paths and errors above. Each skills/*/SKILL.md needs YAML frontmatter between --- lines with non-empty string name and description fields. Names must be unique. Fix the metadata and rerun python3 scripts/check-skill-frontmatter.py."
+            exit 1
+          fi
+      - name: Check authoritative references are synced
+        if: ${{ !cancelled() }}
+        run: |
+          if ! python3 scripts/sync-handoffs.py --check; then
+            echo "::error title=Generated references are out of sync::Edit the authoritative files in docs/, then run python3 scripts/sync-handoffs.py and commit the generated skills/*/references/ files. Do not hand-edit generated copies. See docs/DISTRIBUTION.md."
+            cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          ### Generated references are out of sync
+          The log above lists every missing or stale copy.
+
+          1. Make policy changes in `docs/HANDOFFS.md`, `docs/WORK-STATE.md`, or `docs/GROUP-ORCHESTRATION.md`.
+          2. Run `python3 scripts/sync-handoffs.py` from the repository root.
+          3. Run `python3 scripts/sync-handoffs.py --check`.
+          4. Commit the canonical changes and generated `skills/*/references/` files together.
+
+          Do not fix drift by editing generated copies. See `docs/DISTRIBUTION.md`.
+          EOF
+            exit 1
+          fi
+      - name: Run validation regression tests
+        if: ${{ !cancelled() }}
+        run: |
+          if ! python3 -m unittest discover -s scripts -p 'test_*.py' -v; then
+            echo "::error title=Validation regression tests failed::Reproduce with python3 -m unittest discover -s scripts -p 'test_*.py' -v. Fix the failing validator or generator behavior, then rerun the checks. See docs/DISTRIBUTION.md."
+            exit 1
+          fi
+
+  local-install:
+    name: Independent local skill installs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install the tested GitHub CLI version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/skill-check-gh"
+          cd "$RUNNER_TEMP/skill-check-gh"
+          gh release download v2.92.0 --repo cli/cli \
+            --pattern gh_2.92.0_linux_amd64.tar.gz \
+            --pattern gh_2.92.0_checksums.txt
+          sha256sum --check --ignore-missing gh_2.92.0_checksums.txt
+          tar -xzf gh_2.92.0_linux_amd64.tar.gz
+          echo "$RUNNER_TEMP/skill-check-gh/gh_2.92.0_linux_amd64/bin" >> "$GITHUB_PATH"
+      - name: Check each installed skill and its references
+        run: |
+          gh --version
+          if ! python3 scripts/check-skill-install.py; then
+            echo "::error title=Local skill installation check failed::Run python3 scripts/check-skill-install.py with GitHub CLI 2.92.0. Inspect the failing skill or reference in the log; keep links inside its installed directory, regenerate canonical references, and commit every required bundled file. See docs/DISTRIBUTION.md."
+            exit 1
+          fi

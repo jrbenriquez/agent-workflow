@@ -1,6 +1,6 @@
 ---
 name: orchestrate-work
-description: Drive and resume a human-defined software outcome through bounded implementation, verification, and recalibration until complete or blocked.
+description: Discover, execute, and resume a software outcome or outcome group through bounded implementation, independent verification, and recalibration until complete or blocked.
 ---
 
 # Orchestrate Work
@@ -10,41 +10,58 @@ Read [Handoff contracts](references/HANDOFFS.md) for phase result formats and
 [Outcome state](references/WORK-STATE.md) for the persistent schema, transition
 table, attempt accounting, stopping conditions, and resume rules. The state
 policy gates handoff recommendations; a recommendation cannot bypass a limit.
+Read [Group orchestration](references/GROUP-ORCHESTRATION.md) for input resolution,
+discovery, scheduling, group checkpoints, branches, execution defaults and
+concurrency. Apply its local execution and evidence rules to single outcomes too.
 
 ## Inputs
-- An authoritative outcome document with acceptance criteria and constraints.
+- A single outcome, group directory/index, explicit set, contextual executable
+  outcome, or saved state path. With no scope, discover under `outcomes/` and ask
+  which to execute, even for one candidate. Never invent work if none exists.
 - Existing project-owned outcome state and referenced handoffs/evidence, if any.
 - Maximum implementation attempts, default 3 for a new outcome.
 - Optional project capabilities registry at `.agents/capabilities/CAPABILITIES.md`.
 
 ## Procedure
-1. Read the outcome and preserve its criteria. Resolve material ambiguity with
-   the human rather than inventing requirements.
-2. Validate or initialize project-owned state using the state reference. Check
-   outcome identity, workspace, evidence freshness, and saved progress before
+1. Resolve scope from authoritative documents, repository instructions and accepted
+   decisions. Read full outcomes and dependencies; validate identities and the
+   graph. Preserve criteria; resolve material ambiguity without inventing a spec.
+   Do not silently add external prerequisites to the assignment.
+2. Inspect default/current branches, dirty work, and saved work identity. Establish
+   or recover the group branch and durable checkpoint per the group reference.
+3. Validate or initialize project-owned per-outcome state using the state reference.
+   Check outcome identity, workspace, evidence freshness, and saved progress before
    choosing an action. Missing or invalid history never resets the attempt budget.
-3. Resume the saved invocation or consume its completed handoff when safe.
+4. Select eligible work from current evidence, honoring explicit user order and
+   otherwise dependencies with suggested order as a tie-breaker. Resume the saved
+   invocation or consume its completed handoff when safe.
    Continue from the next unfinished step; block if recovery cannot be justified.
-4. For new implementation, select unmet criteria or a cohesive group, enforce
+5. For new implementation, select unmet criteria or a cohesive group, enforce
    the saved attempt limit, and persist the increment before invoking `implement`.
-5. Save and validate each handoff, then checkpoint its consumption and next
+6. Save and validate each handoff, then checkpoint its consumption and next
    action. Use independent `verify` results for criterion verdicts. Reconsider
    prior passes when subsequent changes could invalidate their evidence.
-6. Route FAIL or INCONCLUSIVE verification through `recalibrate` before another
+7. Route FAIL or INCONCLUSIVE verification through `recalibrate` before another
    implementation. Follow its scoped adjustment or diagnostic action subject to
    the state rules, budget, and no-progress stopping condition.
-7. Stop at `blocked` for exhausted attempts requiring more implementation,
-   unresolved impediments, conflicting requirements, or unsafe recovery. Save
+8. Mark the affected outcome `blocked` for exhausted attempts requiring more
+   implementation, unresolved impediments, conflicting requirements, or unsafe recovery. Save
    concrete blockers and the action or human decision needed to resume.
-8. Complete only when every required criterion has current evidence-backed PASS.
-   Save `phase: complete` and provide a concise report linking evidence. On resume,
-   retain completion only while its outcome and evidence remain applicable.
+9. After completion or blocking, continue other eligible outcomes automatically.
+   Assess later changes against earlier evidence and drain necessary regressions.
+   Finish only when all selected criteria have current evidence-backed PASS or no
+   remaining work can proceed. Preserve prerequisite waits separately from blockers.
+10. Checkpoint and report completed outcomes, blockers/waits, actual checks and
+    evidence links, verification limitations, branch/worktree, and application run
+    instructions when applicable. Revalidate completion on resume.
 
 ## Guardrails
 - Keep runtime state and artifacts in the consuming project, suggested
   `.agents/work/<outcome-id>/`, outside reusable skills and capability definitions.
 - Never silently change acceptance criteria, reset attempts, or raise the budget.
 - Preserve unrelated changes and previously working behavior.
-- Treat project capabilities as optional; disclose gaps when using native tools.
+- Default to local development, labelled fixtures and captured external effects
+  where criteria permit. Real external effects require explicit authorization.
+  Check verification capabilities early; unavailable or unrun checks cannot PASS.
 - Single-agent execution is the baseline. One orchestrator owns state writes;
-  concurrent execution requires coordination beyond this version.
+  parallel work requires authorization, supported isolation and the group policy.

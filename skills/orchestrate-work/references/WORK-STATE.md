@@ -92,8 +92,9 @@ permit progress. `next` names the pending action or requested human decision.
 4. Write each state checkpoint as a whole document using a temporary file and
    replacement where available. Retain the last valid checkpoint on write failure.
    A referenced handoff must exist before publishing a checkpoint that names it.
-   Only one orchestrator may write an outcome at a time. Concurrent writers are
-   unsupported; a future multi-agent runtime must coordinate ownership.
+   Only one coordinator may write an outcome at a time. Delegated workers return
+   artifacts without writing canonical state; group coordination and isolated
+   parallel implementation follow [Group orchestration](GROUP-ORCHESTRATION.md).
 
 A correction to a report is not another implementation attempt. Verification,
 recalibration, and read-only diagnostics do not consume implementation attempts.

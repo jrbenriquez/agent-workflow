@@ -23,10 +23,10 @@ with tempfile.TemporaryDirectory(prefix='agent-workflow-install-') as temporary:
         source = ROOT / 'skills' / name / 'SKILL.md'
         assert entrypoint.read_text().split('---', 2)[2].strip() == source.read_text().split('---', 2)[2].strip()
         documents = [entrypoint]
-        if name != 'to-outcomes':
-            bundled = installed / 'references/HANDOFFS.md'
+        for reference in (source.parent / 'references').glob('*.md'):
+            bundled = installed / 'references' / reference.name
             assert bundled.is_file() and not bundled.is_symlink(), bundled
-            assert bundled.read_bytes() == (ROOT / 'skills' / name / 'references/HANDOFFS.md').read_bytes()
+            assert bundled.read_bytes() == reference.read_bytes(), bundled
             documents.append(bundled)
         for document in documents:
             for link in re.findall(r'\]\(([^)]+)\)', document.read_text()):

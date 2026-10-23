@@ -22,6 +22,10 @@ observation inline. Cite evidence IDs elsewhere in the result. Record actual
 observations, including failed or unavailable checks. Implementation evidence
 helps verification select checks; it never substitutes for independent assessment.
 A bare success claim or inaccessible reference cannot establish a PASS.
+Identify relevant code, configuration, fixtures and environment by content digest
+or immutable snapshot plus environment record. A commit SHA alone is insufficient
+for a dirty tree. Group verification inspects the coordinator's actual integrated
+workspace; worker-branch evidence cannot certify the assembled application.
 
 `blockers` lists concrete impediments, or `[]`. `next` describes an actionable
 recommendation for the receiving phase, not authority to skip verification or

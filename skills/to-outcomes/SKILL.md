@@ -86,14 +86,23 @@ existing index) with:
 4. Explicit source exclusions and a list of unresolved decisions, affected outcomes,
    and any proposed interpretation awaiting resolution.
 
+Suggested order is a deterministic preference among dependency-eligible outcomes;
+the execution coordinator derives readiness again from current evidence. Identify
+external prerequisites explicitly instead of silently adding them to the set.
+If proposing parallel implementation, document suitability, expected shared-file,
+migration/configuration and integration risks. Independence in the dependency graph
+alone is insufficient; planning does not authorize delegation.
+
 Review for omissions, duplicated ownership, circular dependencies, criteria that
 cannot be observed, and overlarge slices. Shared constraints may repeat; give each
 behavior a primary owner and reference it from integration checks.
 
-Report files written, the proposed order and blockers. Show an invocation such as
-`Use orchestrate-work to execute outcomes/<general-outcome-name>/<outcome-id>.md` for the first ready
-outcome. Prerequisites must be checked before each invocation; the current
-orchestrator does not schedule a portfolio of outcomes automatically. Later
-changes require regression checks of affected earlier outcomes; historical
+Report files written, the proposed order and blockers. Show the group invocation
+`orchestrate-work for outcomes/<general-outcome-name>` to execute the selected
+group with dependency scheduling, saved progress and verification defaults.
+A single document can still be invoked with
+`orchestrate-work for outcomes/<general-outcome-name>/<outcome-id>.md`.
+The index is a plan; only a subsequent execution request starts orchestration.
+Later changes require regressions of affected earlier outcomes; historical
 completion alone does not prove the assembled product works. Do not create
 `.agents/work/` state, launch agents, or start implementation unless requested.

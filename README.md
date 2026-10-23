@@ -1,8 +1,9 @@
 # Agent Workflow
 
 Turn a software requirement into working, verified software using five reusable
-agent skills. Start with a PRD or one outcome; the agent implements it, verifies
-its acceptance criteria, and diagnoses failures before trying again.
+agent skills. Start with a PRD, one outcome or an outcome group; the agent
+implements it, verifies its acceptance criteria, and diagnoses failures before
+trying again.
 
 **PRD → Outcomes → Implement → Verify → Recalibrate → Verified or Blocked**
 
@@ -101,28 +102,45 @@ that folder. The index records dependencies, PRD coverage and unresolved blocker
 Each outcome has observable acceptance criteria and verification requirements.
 Different projects or features can have separate folders under `outcomes/`.
 
-Review the generated documents and resolve blockers, then execute the first ready
-outcome using its actual file path:
+Review the generated documents, then execute the group:
 
 ```text
-Use orchestrate-work to execute outcomes/my-website/my-website-story.md.
-Continue until verified completion or Blocked.
+orchestrate-work for outcomes/my-website
 ```
 
-Run subsequent outcomes in dependency order. The workflow handles one outcome at
-a time; the index does not automatically schedule the whole project. For a small
-change, skip PRD splitting and write one outcome using [the template](templates/outcome.md).
+The coordinator reads the index and full outcomes, validates dependencies, creates
+a dedicated branch from the configured default branch, and runs eligible outcomes
+sequentially. It continues after completion or blocking to other eligible work,
+until all selected criteria have current verified PASS or nothing else can proceed.
+Each outcome keeps its own three-attempt budget. Later changes trigger affected
+regressions before the group can remain complete.
 
-To continue in a new chat, provide the saved state path:
+For example, `orchestrate-work for outcomes/poc` activates these defaults for that
+group without restating coordination, continuation, verification or branch policy.
+Execution stays local with labelled fixtures and captured effects where criteria
+allow. Real external effects need explicit authorization; required real delivery
+cannot be passed using a local substitute. Missing checks remain unverified.
+Parallel implementation requires authorization and safe isolation; otherwise work
+stays sequential. No push, PR, merge or deployment follows automatically.
+
+A document path still executes one outcome; an explicit set or contextual
+executable outcome also works. With no scope, `orchestrate-work` lists available
+groups and standalone outcomes under `outcomes/` and asks which to execute, even
+for one candidate. If none exist it reports no work. For a small change, skip PRD
+splitting and write one outcome using [the template](templates/outcome.md).
+
+To continue in a new chat, repeat the group invocation:
 
 ```text
-Use orchestrate-work to resume from .agents/work/my-website-story/state.yaml.
-Validate the outcome, workspace and saved evidence. Preserve the attempt count
-and retry limit; continue until verified completion or Blocked.
+orchestrate-work for outcomes/my-website
 ```
 
 Keep outcome documents and `.agents/work/<outcome-id>/` state, handoffs and evidence
 available to the next session. A blocked outcome records what is needed to resume.
+Groups also save `.agents/work/groups/<group-id>/state.yaml` with scope, scheduling,
+branch/worktree and pending regressions, referencing per-outcome state. Repeating
+the invocation resumes that work and its budgets. You can also supply either
+saved state path explicitly. Existing single-outcome version 1 state is unchanged.
 
 ## Keep your installed skills updated
 
@@ -163,7 +181,7 @@ follow every commit on `main`. Check `gh skill update --help` for your CLI versi
 | Skill | Responsibility |
 | --- | --- |
 | `to-outcomes` | Split a PRD into scoped outcomes, dependencies and a coverage index. |
-| `orchestrate-work` | Own checkpoints, retry limits, phase transitions and completion. |
+| `orchestrate-work` | Resolve scope, schedule groups, own branches/checkpoints, enforce retry limits and current verified completion. |
 | `implement` | Make scoped changes and return an implementation handoff. |
 | `verify` | Independently assess acceptance criteria with actual evidence. |
 | `recalibrate` | Diagnose failed or inconclusive verification and plan the next action. |
@@ -173,4 +191,5 @@ Project-specific tools are optional: describe them in
 Without a registry, the agent uses available native tools and reports gaps.
 
 See [handoff contracts](docs/HANDOFFS.md), [state and recovery rules](docs/WORK-STATE.md),
+[group execution and branch policy](docs/GROUP-ORCHESTRATION.md),
 and [distribution and installation checks](docs/DISTRIBUTION.md) for details.

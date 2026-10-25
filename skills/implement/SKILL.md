@@ -16,6 +16,9 @@ evidence rules, examples, and phase routing.
 
 ## Procedure
 1. Inspect relevant code, tests, repository instructions, and optional `.agents/capabilities/CAPABILITIES.md`.
+   Establish the affected app's stack from its manifests/lockfiles, configuration
+   and accepted decisions. Follow existing conventions; generic stack preferences
+   apply only to genuinely new or undecided choices under the shared policy.
 2. Confirm the current branch and repository state; do not discard unrelated changes.
 3. Plan the smallest coherent change that satisfies the assigned criteria.
 4. Implement and add or update appropriate tests.

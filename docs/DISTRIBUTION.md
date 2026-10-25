@@ -63,7 +63,7 @@ Commit the generated `skills/*/references/HANDOFFS.md` files and
 `skills/orchestrate-work/references/{WORK-STATE,GROUP-ORCHESTRATION}.md` with their sources.
 Do not hand-edit them. The sync script adds a generated-file notice; `--check`
 fails if any copy is absent or stale. The installation check repeats the four
-independent core installs plus `to-outcomes`, checks all bundled reference contents
+independent core installs plus `to-outcomes` and `plan-work`, checks all bundled reference contents
 and their local links, and removes
 its temporary consuming repositories. It requires Python 3.9+, Git, and a `gh`
 version supporting `skill install --from-local`.
@@ -71,6 +71,10 @@ version supporting `skill install --from-local`.
 The installer needs no generator or shared upstream directory at installation
 time: each committed skill directory already contains its contract. There is no
 new core skill or dependency on project capabilities.
+
+`plan-work` and `to-outcomes` are self-contained planning skills. Neither produces
+runtime phase results, so neither needs a generated `HANDOFFS.md` copy or an entry
+in `scripts/sync-handoffs.py`. Their planning artifacts remain project-owned.
 
 ## Continuous integration
 
@@ -155,8 +159,28 @@ Execute a group with `orchestrate-work for outcomes/<general-outcome-name>` or a
 single outcome by its document path. The index remains a plan until an execution
 request invokes the coordinator; `to-outcomes` does not create runtime state,
 launch agents or start implementation. The local
-installation checker includes this fifth, optional skill and compares its
+installation checker includes this optional skill and compares its
 installed instruction body to the source (the installer rewrites frontmatter).
 Existing per-outcome schema version 1 and phase handoff fields remain compatible;
 group checkpoint version 1 is separate and references them. Unknown/legacy state
 requires explicit reconciliation, never silent migration or a fresh budget.
+
+## Optional idea-to-PRD planning
+
+`plan-work` takes an idea or change through discovery, an approved preview and a
+PRD, then delivers a reference zip. Install it independently:
+
+```sh
+gh skill install /path/to/agent-workflow plan-work --from-local --agent codex --scope project
+```
+
+Extract the delivered package into the consuming repository, keeping its files
+together, then invoke `to-outcomes` with the packaged `docs/PRD.md`. The package
+README records authority: the PRD governs functional rules, validation, state
+changes and data; the preview governs visual presentation and interaction design.
+Outcome decomposition preserves the relevant references and constraints. Only an
+explicit execution request invokes `orchestrate-work`.
+
+The local installation checker includes `plan-work` as the sixth skill, comparing
+its installed instruction body to the source and validating internal links. It
+needs no bundled reference files. Frontmatter validation discovers it automatically.

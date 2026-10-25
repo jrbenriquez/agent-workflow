@@ -1,11 +1,11 @@
 # Agent Workflow
 
-Turn a software requirement into working, verified software using five reusable
-agent skills. Start with a PRD, one outcome or an outcome group; the agent
+Turn a software idea or requirement into working, verified software using six reusable
+agent skills. Start with an idea, a PRD, one outcome or an outcome group; the agent
 implements it, verifies its acceptance criteria, and diagnoses failures before
 trying again.
 
-**PRD → Outcomes → Implement → Verify → Recalibrate → Verified or Blocked**
+**Idea → Plan (PRD + preview) → Outcomes → Implement → Verify → Recalibrate → Verified or Blocked**
 
 Progress, evidence and handoffs are saved in your repository so another chat can
 resume from the next unfinished phase. Each outcome has a default budget of three
@@ -45,10 +45,11 @@ cd /path/to/your-project
 gh skill install jrbenriquez/agent-workflow --agent codex --scope project
 ```
 
-Follow the prompts to choose skills. Install `to-outcomes`, `orchestrate-work`,
+Follow the prompts to choose skills. Install `plan-work`, `to-outcomes`, `orchestrate-work`,
 `implement`, `verify` and `recalibrate` for the full workflow. The command opens
-skill selection; omitting the skill name does not automatically install all five.
-Use the loop below if you want all five installed without selecting each one.
+skill selection; omitting the skill name does not automatically install all six.
+Skip `plan-work` if you already have a PRD. The fixed-release loop below installs
+the earlier five-skill set; `plan-work` requires a revision containing it.
 
 Choose your agent by replacing `codex` with the appropriate value:
 
@@ -77,7 +78,7 @@ this repository; `--scope user` makes it available across your projects.
 For Codex, project skills are copied into `.agents/skills/`; other agents may use
 a different directory. Installing skills does not start implementation.
 
-**Alternative: install all five at a fixed release.** This loop targets Codex;
+**Alternative: install the earlier five-skill set at a fixed release.** This loop targets Codex;
 replace `codex` for another agent:
 
 ```sh
@@ -87,10 +88,21 @@ for skill in to-outcomes orchestrate-work implement verify recalibrate; do
 done
 ```
 
-This requires the `v0.1.0` tag to have been published. The interactive command can
+This requires the `v0.1.0` tag to have been published with the listed skills;
+it does not install `plan-work`. The interactive command can
 also take `--pin v0.1.0` when you want skill selection at that fixed release.
 
-Open a new agent chat in that repository and provide your PRD:
+Open a new agent chat in that repository. If you are starting with an idea, use:
+
+```text
+Use plan-work to plan <your idea or change>.
+```
+
+The skill works through discovery, an approved preview and a PRD, then delivers a
+reference package. Extract the package into your repository, keeping its files
+together. Planning and package delivery do not start execution.
+
+With an existing PRD, or the PRD from that package, use:
 
 ```text
 Use to-outcomes to split docs/product-prd.md.
@@ -101,6 +113,8 @@ The skill writes `outcomes/my-website/README.md` plus one document per outcome i
 that folder. The index records dependencies, PRD coverage and unresolved blockers.
 Each outcome has observable acceptance criteria and verification requirements.
 Different projects or features can have separate folders under `outcomes/`.
+For a reference package, substitute its extracted `docs/PRD.md` path above;
+`to-outcomes` preserves its preview references and PRD/preview authority rules.
 
 Review the generated documents, then execute the group:
 
@@ -148,7 +162,7 @@ Use the same installer you used originally. For skills installed with `npx skill
 
 ```sh
 npx skills check
-npx skills update to-outcomes orchestrate-work implement verify recalibrate
+npx skills update plan-work to-outcomes orchestrate-work implement verify recalibrate
 ```
 
 Review local edits before applying updates. Keep the generated `skills-lock.json`
@@ -159,15 +173,17 @@ release stays fixed, and `gh skill update` skips pinned skills.
 
 For a controlled upgrade, review the upstream changes, choose a published release,
 and rerun the installation loop above with the new tag (for example, `v0.2.0`).
+Add `plan-work` to that loop when the chosen release contains it.
 Review any overwrite prompts and local skill edits, then review and commit the
-updated skill files in your project's agent-specific directory. Upgrade all five skills together.
+updated skill files in your project's agent-specific directory. Upgrade the installed
+workflow skills together, including `plan-work` when present in the chosen release.
 Application code, outcome documents and runtime state remain project-owned;
 follow any migration instructions if a release changes the state schema.
 
 If you prefer unpinned updates, from your project run:
 
 ```sh
-gh skill update to-outcomes orchestrate-work implement verify recalibrate --unpin
+gh skill update plan-work to-outcomes orchestrate-work implement verify recalibrate --unpin
 ```
 
 This removes the release pins and updates the selected skills interactively. For
@@ -176,10 +192,11 @@ available updates. Unversioned installation resolves the latest tagged release,
 or the default branch when there are no releases; it should not be assumed to
 follow every commit on `main`. Check `gh skill update --help` for your CLI version.
 
-## The five skills
+## The six skills
 
 | Skill | Responsibility |
 | --- | --- |
+| `plan-work` | Turn an idea or change into an approved preview, PRD and agent reference package. |
 | `to-outcomes` | Split a PRD into scoped outcomes, dependencies and a coverage index. |
 | `orchestrate-work` | Resolve scope, schedule groups, own branches/checkpoints, enforce retry limits and current verified completion. |
 | `implement` | Make scoped changes and return an implementation handoff. |

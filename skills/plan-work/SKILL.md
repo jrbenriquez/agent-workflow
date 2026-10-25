@@ -164,7 +164,7 @@ Repeat for as long as the user wants. After each update, ask again whether it is
 
 Write the PRD once the preview is approved. If a doc tool exists, make it an editable doc so the user can comment, and **always** produce a Markdown copy for the package. Keep the two in sync: if the doc changes later, re-export it and re-package.
 
-**Division of authority** (state it in the PRD and the README): the preview is the source of truth for look, layout, copy tone and interaction; the PRD is the source of truth for behaviour, data and rules.
+**Division of authority** (state it in the PRD and the README): the preview is the source of truth for visual presentation, layout, copy tone and interaction design; the PRD is the source of truth for functional rules, validation, state changes and data. If they disagree on functional behaviour, the PRD wins.
 
 ### PRD for a new build
 
@@ -221,9 +221,9 @@ For a new build, also deliver `<work>-standalone.html`, a single file with image
 
 ## Start here
 1. Read `docs/PRD.md`: what to build, stack, data model, rules, acceptance criteria.
-2. Look at the preview: open `prototype/index.html` at <390 px and/or 1440 px>, or run branch `<preview branch>` (see `preview/`). It is the source of truth for look and interaction.
+2. Look at the preview: open `prototype/index.html` at <390 px and/or 1440 px>, or run branch `<preview branch>` (see `preview/`). It is the source of truth for visual presentation and interaction design.
 3. `docs/brief.md` (and any brand docs) decide unclear design choices.
-When the PRD and the preview disagree, the PRD wins on behaviour and data; the preview wins on look and feel.
+When the PRD and the preview disagree, the PRD wins on functional rules, validation, state changes and data; the preview wins on visual presentation and interaction design.
 
 ## Ground rules
 - <Stack rule. Existing app: "Follow the existing stack and conventions (see the PRD); add no framework or dependency without approval." New build: the chosen stack, for example "server-rendered Django + Hotwire, no React, no bundler".>
@@ -239,6 +239,12 @@ When the PRD and the preview disagree, the PRD wins on behaviour and data; the p
 
 ## Notes
 - <Image stand-ins, fonts to self-host, currency and units, anything easy to get wrong.>
+
+## Next step
+Extract this package into the consuming repository, keeping its files together. With `to-outcomes` installed, ask:
+`Use to-outcomes to split <path-to-this-package>/docs/PRD.md. Name the general outcome "<Name of the work>".`
+Review the generated outcomes, then explicitly request execution:
+`orchestrate-work for outcomes/<general-outcome-name>`
 ```
 
 **Verify before sending:**
@@ -248,6 +254,8 @@ When the PRD and the preview disagree, the PRD wins on behaviour and data; the p
 - Confirm the README's file paths and branch names exist.
 
 Then send the zip (and the standalone file, for a new build) with a line of context each.
+
+Explain the next step from the README: extract into the consuming repository, use `to-outcomes` on the packaged PRD, review the outcomes, then explicitly invoke `orchestrate-work`. Package delivery does not start decomposition or execution. This planning package is not a runtime phase result and needs no `HANDOFFS.md` or `.agents/work/` state.
 
 **After delivery:** if the PRD or the preview changes, update the doc, the Markdown copy and the zip together. Tell the user which file replaces which.
 

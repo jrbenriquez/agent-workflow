@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add `plan-work` for discovery, approved previews, PRDs and agent reference
+  packages; document its optional entry point and check independent installation.
+- Preserve planning-package references and PRD/preview authority in outcome
+  decomposition without adding runtime handoff or state dependencies.
+
 - Make existing app stack choices authoritative over generic technology defaults
   during planning, implementation, verification and recalibration.
 

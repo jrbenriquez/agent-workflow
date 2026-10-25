@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 subprocess.run(['python3', str(ROOT / 'scripts/sync-handoffs.py'), '--check'], check=True)
 with tempfile.TemporaryDirectory(prefix='agent-workflow-install-') as temporary:
-    for name in ('orchestrate-work', 'implement', 'verify', 'recalibrate', 'to-outcomes'):
+    for name in ('orchestrate-work', 'implement', 'verify', 'recalibrate', 'to-outcomes', 'plan-work'):
         consumer = Path(temporary) / name
         consumer.mkdir()
         subprocess.run(['git', 'init', '-q', str(consumer)], check=True)

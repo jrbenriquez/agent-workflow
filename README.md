@@ -190,6 +190,12 @@ Project-specific tools are optional: describe them in
 `.agents/capabilities/CAPABILITIES.md` using [the capability template](templates/CAPABILITIES.md).
 Without a registry, the agent uses available native tools and reports gaps.
 
+The skills adapt to an existing app's stack and conventions. Generic technology
+preferences apply only where choices are genuinely new or undecided and compatible
+with project constraints; they do not authorize framework replacements, database
+migrations or dependency upgrades in an existing app. Explicit project decisions
+take precedence, and material changes outside accepted scope require resolution.
+
 See [handoff contracts](docs/HANDOFFS.md), [state and recovery rules](docs/WORK-STATE.md),
 [group execution and branch policy](docs/GROUP-ORCHESTRATION.md),
 and [distribution and installation checks](docs/DISTRIBUTION.md) for details.

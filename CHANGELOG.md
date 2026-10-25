@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Make existing app stack choices authoritative over generic technology defaults
+  during planning, implementation, verification and recalibration.
+
 - Execute and resume outcome groups with dependency scheduling, separate group
   checkpoints, persistent branch identity, local defaults and integrated evidence.
 - Preserve per-outcome schema version 1, handoff fields and attempt accounting.

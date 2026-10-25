@@ -5,6 +5,28 @@ not prescribe files, storage, agent runtimes, tools, or retry policy. Use the YA
 shapes below, or Markdown with the same named fields and values. Empty lists
 must be explicit; do not silently omit required information.
 
+## Repository technology choices
+
+Before planning changes, inspect repository instructions, accepted architecture
+decisions, relevant code, manifests/lockfiles, tests, CI and runtime configuration.
+In an existing app, preserve its languages, frameworks, database, package manager,
+dependency versions and established patterns unless the accepted assignment
+explicitly requires a change. In a monorepo, follow the affected application's
+conventions. A new feature, folder or missing manifest alone does not make the
+assignment a new app. Reuse existing capabilities before proposing alternatives.
+
+Generic skill or personal stack preferences are fallback suggestions only for a
+genuinely new app or an undecided component, after checking project constraints
+and compatibility. They cannot override explicit user decisions or established
+project choices. Do not introduce a competing framework, migrate storage, replace
+tooling or upgrade dependencies merely to match a preference. If satisfying the
+outcome requires a material stack change outside accepted scope, explain the
+constraint, compatible alternatives and impact, and resolve that decision before
+making the change; continue unaffected work where possible. Record the resulting
+decision in project-owned requirements or handoffs so later phases preserve it.
+Verify against accepted project constraints, not the verifier's preferred stack;
+recalibration must not use a stack rewrite as an unapproved workaround.
+
 ## Common fields and evidence
 
 Every result includes `type`, `outcome_id` (from the authoritative outcome),

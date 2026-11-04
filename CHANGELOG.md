@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Make supplied prototypes the visual baseline through decomposition, orchestration,
+  implementation and verification. Require mapped, paired visual inspection and
+  deviation records; functional checks cannot substitute for visual acceptance.
+  Recheck affected screens after shared UI changes without resetting budgets.
+
 - Add `plan-work` for discovery, approved previews, PRDs and agent reference
   packages; document its optional entry point and check independent installation.
 - Preserve planning-package references and PRD/preview authority in outcome

@@ -126,6 +126,12 @@ The coordinator reads the index and full outcomes, validates dependencies, creat
 a dedicated branch from the configured default branch, and runs eligible outcomes
 sequentially. It continues after completion or blocking to other eligible work,
 until all selected criteria have current verified PASS or nothing else can proceed.
+For UI work, a supplied prototype is the visual baseline, including when it is
+the only visual reference. Verification requires inspected, paired reference/app
+screenshots and a screen/state comparison matrix; working routes, matching colors
+and no-overflow tests alone cannot establish visual fidelity. Unaccepted visual
+mismatches fail; missing comparisons remain inconclusive.
+
 Each outcome keeps its own three-attempt budget. Later changes trigger affected
 regressions before the group can remain complete.
 

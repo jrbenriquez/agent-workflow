@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## v0.1.3 (2026-11-07)
+
+- Use `agentic/` as the default branch prefix for new outcome groups. Existing
+  repository conventions, explicit branch instructions and saved branches still apply.
+
+## Previous changes
+
 - Make supplied prototypes the visual baseline through decomposition, orchestration,
   implementation and verification. Require mapped, paired visual inspection and
   deviation records; functional checks cannot substitute for visual acceptance.

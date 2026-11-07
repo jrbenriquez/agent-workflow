@@ -173,7 +173,7 @@ external_prerequisites: [] # {id, reference, required, evidence, resolving_actio
 workspace:
   repository: "<canonical repository identity>"
   worktree: "<absolute coordinator worktree path>"
-  branch: codex/outcomes/example
+  branch: agentic/outcomes/example
   base: {reference: origin/main, commit: "<resolved base SHA>", freshness: "<fetch observation or explicit fallback>"}
   integrated: "<actual content/snapshot and relevant environment identity>"
 coordinator: "<single owning session; explicit takeover after confirming old writer stopped>"
@@ -235,7 +235,7 @@ SHA and unknown freshness. Otherwise block branch creation for the necessary
 decision. Never describe an offline base as latest remote state.
 
 Create a dedicated deterministic branch `<repo-prefix>outcomes/<group-id>` from
-that resolved base; use `codex/outcomes/<group-id>` absent a repository convention.
+that resolved base; use `agentic/outcomes/<group-id>` absent a repository convention.
 Validate branch names and detect normalized identity collisions. Inspect existing
 local/remote names and worktrees first. A colliding name is not proof of ownership;
 reuse only after recorded identity/history validation or explicit reconciliation.
